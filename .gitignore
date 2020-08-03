@@ -1,0 +1,9 @@
+# Editor
+.idea/
+
+# Enwironment
+venv/
+
+# In/out dirs
+/out/
+/src/
