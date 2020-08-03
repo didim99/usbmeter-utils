@@ -1,19 +1,21 @@
 import os
 
-from common import rreplace, hex_spaced
+from common import *
 
 """
     WTM format specification (WITRN Meter v4.6):
     
-    file structure
+    File structure
     Measurement frequency: 100 samples per second
     16 bytes - header, 'wtm1903 ' in UTF16-LE
     Data records, 7 bytes for each record:
-        2 bytes - voltage
-        2 bytes - current
-        1 byte - D- voltage
-        1 byte - D+ voltage
-        1 byte - ext. temp
+        size - value, format, precision
+        2 bytes - voltage, sighed int, 1 mV
+        2 bytes - current, sighed int, 1 mA
+        1 byte - D- voltage, sighed int, 100 mV
+        1 byte - D+ voltage, sighed int, 100 mV
+        1 byte - ext. temp, sighed int, 1 degC/degF
+    all multi-byte values stored in Little-endian
 """
 
 src_dir = "src"
@@ -21,19 +23,22 @@ out_dir = "out"
 src_ext = ".wtm"
 out_ext = ".csv"
 header = 'wtm1903 '
-point_size = 7  # bytes in sequence
+
+use_float = True
 
 if __name__ == '__main__':
     cwd = os.getcwd()
     src_dir = cwd + "/" + src_dir
     out_dir = cwd + "/" + out_dir
 
+    files = 0
     for name in os.listdir(src_dir):
         if src_ext != os.path.splitext(name)[1]:
             continue
 
-        print(f"Processing: {name}")
+        print(f"Processing: {name}...")
         out_name = rreplace(name, src_ext, out_ext)
+
         src_file = open(src_dir + "/" + name, "rb")
         out_file = open(out_dir + "/" + out_name, "w")
 
@@ -44,18 +49,43 @@ if __name__ == '__main__':
                 print("Incorrect header")
                 raise LookupError
 
+            ts = 0
             count = 1
             while True:
-                buf = src_file.read(point_size)
-                if not buf:
+                voltage = read_int(src_file, 2)
+                if voltage is None:
                     break
+                current = read_int(src_file, 2)
+                data_neg = read_int(src_file, 1) * 100
+                data_pos = read_int(src_file, 1) * 100
+                temp = read_int(src_file, 1)
 
-                print(count, hex_spaced(buf))
+                if temp == -72:
+                    temp = 'null'
+
+                if use_float:
+                    voltage /= 1000
+                    current /= 1000
+                    data_neg /= 1000
+                    data_pos /= 1000
+
+                strtime = timestr(ts)
+                # print(ts, voltage, current, data_pos, data_neg, temp)
+                line = "{},{:.3f},{:.3f},{:.1f},{:.1f},{}".format(
+                    strtime, voltage, current, data_pos, data_neg, temp)
+                out_file.write(line)
+                out_file.write('\n')
+                # print(line)
+
                 count += 1
+                ts += 10
 
+            print(f"Total points: {count} ({timestr(ts)})")
+            files += 1
         except LookupError:
             pass
 
         src_file.close()
         out_file.close()
-        # break
+
+    print(f"Total files processed: {files}")
