@@ -25,6 +25,7 @@ out_ext = ".csv"
 header = 'wtm1903 '
 
 use_float = True
+add_header = False
 
 if __name__ == '__main__':
     cwd = os.getcwd()
@@ -41,6 +42,13 @@ if __name__ == '__main__':
 
         src_file = open(src_dir + "/" + name, "rb")
         out_file = open(out_dir + "/" + out_name, "w")
+
+        if add_header:
+            voltage_res = 'V' if use_float else 'mV'
+            current_res = 'A' if use_float else 'mA'
+            out_file.write('time (HH:MM:SS:MS),voltage ({}),current ({}),D+ ({}), D- ({}),temp (deg)'
+                           .format(voltage_res, current_res, voltage_res, voltage_res))
+            out_file.write('\n')
 
         try:
             buf = src_file.read(len(header) * 2)  # UTF16-LE
@@ -71,8 +79,11 @@ if __name__ == '__main__':
 
                 strtime = timestr(ts)
                 # print(ts, voltage, current, data_pos, data_neg, temp)
-                line = "{},{:.3f},{:.3f},{:.1f},{:.1f},{}".format(
-                    strtime, voltage, current, data_pos, data_neg, temp)
+                fmt_main = '{:.3f}' if use_float else '{:d}'
+                fmt_sub = '{:.1f}' if use_float else '{:d}'
+                fmt_line = "{},%s,%s,%s,%s,{}" % (fmt_main, fmt_main, fmt_sub, fmt_sub)
+                line = fmt_line.format(strtime, voltage, current, data_pos, data_neg, temp)
+
                 out_file.write(line)
                 out_file.write('\n')
                 # print(line)

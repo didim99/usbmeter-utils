@@ -36,6 +36,7 @@ header = b'\x05'
 max_points = 352
 
 use_float = True
+add_header = False
 
 if __name__ == '__main__':
     cwd = os.getcwd()
@@ -53,6 +54,13 @@ if __name__ == '__main__':
 
         src_file = open(src_dir + "/" + name, "rb")
         out_file = open(out_dir + "/" + out_name, "w")
+
+        if add_header:
+            voltage_res = 'V' if use_float else 'mV'
+            current_res = 'A' if use_float else 'mA'
+            out_file.write('time (HH:MM:SS:MS),voltage ({}),current ({}),temp (deg)'
+                           .format(voltage_res, current_res))
+            out_file.write('\n')
 
         try:
             buf = src_file.read(len(header))
@@ -81,8 +89,10 @@ if __name__ == '__main__':
 
                 strtime = timestr(ts)
                 # print(count, ts, voltage, current, temp)
-                line = "{},{:.3f},{:.3f},{}".format(
-                    strtime, voltage, current, temp)
+                fmt_main = '{:.3f}' if use_float else '{:d}'
+                fmt_line = "{},%s,%s,{}" % (fmt_main, fmt_main)
+                line = fmt_line.format(strtime, voltage, current, temp)
+
                 out_file.write(line)
                 out_file.write('\n')
                 # print(line)
