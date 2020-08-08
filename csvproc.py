@@ -1,6 +1,6 @@
 import os
 
-from common import ts2str, lines_count
+from common import str2ts, ts2str, lines_count
 
 src_dir = "src"
 out_dir = "out"
@@ -41,8 +41,8 @@ def resample_avg(data):
 
 if __name__ == '__main__':
     cwd = os.getcwd()
-    src_dir = cwd + "/" + src_dir
-    out_dir = cwd + "/" + out_dir
+    src_dir = os.path.join(cwd, src_dir)
+    out_dir = os.path.join(cwd, out_dir)
 
     if resample_rate == 1:
         resample = False
@@ -63,9 +63,9 @@ if __name__ == '__main__':
             continue
 
         print(f"Processing: {name}")
-        last_line = lines_count(src_dir + "/" + name) - 1
-        src_file = open(src_dir + "/" + name, "r")
-        out_file = open(out_dir + "/" + name, "w")
+        last_line = lines_count(os.path.join(src_dir, name)) - 1
+        src_file = open(os.path.join(src_dir, name), "r")
+        out_file = open(os.path.join(out_dir, name), "w")
 
         points = []
         total_read = 0

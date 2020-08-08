@@ -29,8 +29,8 @@ add_header = False
 
 if __name__ == '__main__':
     cwd = os.getcwd()
-    src_dir = cwd + "/" + src_dir
-    out_dir = cwd + "/" + out_dir
+    src_dir = os.path.join(cwd, src_dir)
+    out_dir = os.path.join(cwd, out_dir)
 
     files = 0
     for name in os.listdir(src_dir):
@@ -40,8 +40,8 @@ if __name__ == '__main__':
         print(f"Processing: {name}...")
         out_name = rreplace(name, src_ext, out_ext)
 
-        src_file = open(src_dir + "/" + name, "rb")
-        out_file = open(out_dir + "/" + out_name, "w")
+        src_file = open(os.path.join(src_dir, name), "rb")
+        out_file = open(os.path.join(out_dir, out_name), "w")
 
         if add_header:
             voltage_res = 'V' if use_float else 'mV'
