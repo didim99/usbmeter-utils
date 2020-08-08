@@ -77,7 +77,7 @@ if __name__ == '__main__':
                     data_neg /= 1000
                     data_pos /= 1000
 
-                strtime = timestr(ts)
+                strtime = ts2str(ts)
                 # print(ts, voltage, current, data_pos, data_neg, temp)
                 fmt_main = '{:.3f}' if use_float else '{:d}'
                 fmt_sub = '{:.1f}' if use_float else '{:d}'
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 count += 1
                 ts += 10
 
-            print(f"Total points: {count} ({timestr(ts)})")
+            print(f"Total points: {count-1} ({ts2str(ts)})")
             files += 1
         except LookupError:
             pass
