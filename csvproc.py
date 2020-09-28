@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import os
 
 from common import str2ts, ts2str, lines_count
@@ -55,7 +57,7 @@ if __name__ == '__main__':
         ['time (HH:MM:SS{}MS)'.format(time_div_ms), 'voltage (V)',
          'current (A)', 'D+ (V)', ' D- (V)', 'temp (deg)'])
     formats = {'v': '{:.3f}', 'c': '{:.3f}',
-               'd+': '{:.1f}', 'd-': '{:.1f}', 't': '{:d}'}
+               'd+': '{:.1f}', 'd-': '{:.1f}', 't': '{:.0f}'}
 
     files = 0
     for name in os.listdir(src_dir):
