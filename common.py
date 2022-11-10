@@ -1,4 +1,6 @@
 # Common functions
+import struct
+
 
 def rreplace(s, old, new, occurrence=1) -> str:
     li = s.rsplit(old, occurrence)
@@ -28,6 +30,13 @@ def str2ts(*args) -> int:
         factor *= factors[i]
         res += args[i]*factor
     return res
+
+
+def read_float(src, size) -> float or None:
+    buf = src.read(size)
+    if not buf:
+        return None
+    return struct.unpack("<d", buf)[0]
 
 
 def read_int(src, size) -> int or None:
