@@ -18,7 +18,7 @@ from common import *
         I - mInutes (00-59)
         S - Seconds (00-59)
         C - total Count of recorded points in file
-    
+
     File structure
     1 byte - header, 0x05
     1 byte - total record time, hours
@@ -27,6 +27,7 @@ from common import *
         2 bytes - voltage, sighed int, 1 mV
         2 bytes - current, sighed int, 1 mA
         1 byte - ext. temp, sighed int, 1 degC/degF
+
     all multi-byte values stored in Little-endian
 """
 

@@ -1,37 +1,37 @@
 #! /usr/bin/python3
+
 import os
 
-from common import read_int, rreplace, read_float, hex_spaced
+from common import *
 
 """
-     126 bytes | 40    -> +1 pts
-     206 bytes | 120   -> +3 pts
-     526 bytes | 440   -> +11 pts
-    1046 bytes | 960   -> +24 pts
-    3126 bytes | 3040  -> +76 pts
+    CFN format specification (FNIRSI toolbox v0.0.6):
 
     86 bytes header
+      size - value, format
       8 bytes - sample rate (float)
-      
+
       14 bytes - unknown
-      
+
       7 bytes - block header, unknown data
-      8 bytes - max voltage
-      8 bytes - min voltage
-      
+      8 bytes - max voltage (float)
+      8 bytes - min voltage (float)
+
       7 bytes - block header, unknown data
-      8 bytes - max current
-      8 bytes - min current
-      
+      8 bytes - max current (float)
+      8 bytes - min current (float)
+
       14 bytes - unknown
-      4 bytes - length of data (pts)
+      4 bytes - count of data points (int)
 
     40 bytes / point (default setup)
-      8 bytes - time
-      8 bytes - voltage
-      8 bytes - current
-      8 bytes - capacity
-      8 bytes - energy
+      8 bytes - time (float)
+      8 bytes - voltage (float)
+      8 bytes - current (float)
+      8 bytes - capacity (float)
+      8 bytes - energy (float)
+    
+    All multi-byte values stored in Little-endian
 """
 
 src_dir = "src"
