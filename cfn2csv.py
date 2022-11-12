@@ -5,33 +5,34 @@ import os
 from common import *
 
 """
-    CFN format specification (FNIRSI toolbox v0.0.6):
+    CFN format specification (FNIRSI toolbox v0.0.6).
+    All multi-byte values stored in Little-endian.
+    File structure:
 
-    86 bytes header
-      size - value, format
-      8 bytes - sample rate (float)
+      Offset     Size         Unit     Description
 
-      14 bytes - unknown
+    - Header: 86 bytes (default setup) ------------------------------
+      0x00 (0)   8  (double)  1 s/s    Sample rate
 
-      7 bytes - block header, unknown data
-      8 bytes - max voltage (float)
-      8 bytes - min voltage (float)
+      0x08 (8)   14 (???)              Unknown data
 
-      7 bytes - block header, unknown data
-      8 bytes - max current (float)
-      8 bytes - min current (float)
+      0x16 (22)  7  (???)              Block header, unknown data
+      0x1D (29)  8  (double)  1 V      Max registered USB V_BUS voltage
+      0x25 (37)  8  (double)  1 V      Min registered USB V_BUS voltage
+      0x2D (45)  7  (???)              Block header, unknown data
+      0x34 (52)  8  (double)  1 A      Max registered USB V_BUS current
+      0x3C (60)  8  (double)  1 A      Min registered USB V_BUS current
 
-      14 bytes - unknown
-      4 bytes - count of data points (int)
+      0x44 (68)  14 (???)              Unknown data
 
-    40 bytes / point (default setup)
-      8 bytes - time (float)
-      8 bytes - voltage (float)
-      8 bytes - current (float)
-      8 bytes - capacity (float)
-      8 bytes - energy (float)
-    
-    All multi-byte values stored in Little-endian
+      0x52 (82)  4  (int32)            Count of data points
+
+    - Data section: 40 bytes * point count (default setup) ----------
+      0x00 (0)   8  (double)  1 sec    Time offset
+      0x08 (8)   8  (double)  1 V      USB V_BUS voltage
+      0x10 (16)  8  (double)  1 A      USB V_BUS current
+      0x18 (24)  8  (double)  1 Ah     Accumulated capacity
+      0x20 (32)  8  (double)  1 Wh     Accumulated energy
 """
 
 src_dir = "src"

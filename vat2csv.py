@@ -6,11 +6,12 @@ import re
 from common import *
 
 """
-    WITRN U2p: maximum 352 points x 5 bytes each
-    total 1760 bytes for internal offline storage
+    WITRN U2p: maximum 352 points x 5 bytes each.
+    Total 1760 bytes for internal offline storage.
 
-    VAT format specification (WITRN Meter v4.6):
-    file name: YYYYMMDD_HHIISS_CCC.vat
+    VAT format specification (WITRN Meter v4.6).
+
+    File name: YYYYMMDD_HHIISS_CCC.vat
         Y - Year
         M - Month (01-12)
         D - Day of month (01-31)
@@ -19,16 +20,19 @@ from common import *
         S - Seconds (00-59)
         C - total Count of recorded points in file
 
-    File structure
-    1 byte - header, 0x05
-    1 byte - total record time, hours
-    Data records, 5 bytes for each record:
-        size - value, format, precision
-        2 bytes - voltage, sighed int, 1 mV
-        2 bytes - current, sighed int, 1 mA
-        1 byte - ext. temp, sighed int, 1 degC/degF
+    all multi-byte values stored in Little-endian.
+    File structure:
 
-    all multi-byte values stored in Little-endian
+      Offset     Size         Unit     Description
+
+    - Header: 2 bytes -----------------------------------------------
+      0x00 (0)   1 (int8)              Constant 0x05, unknown
+      0x01 (1)   1 (int8)     1 hour   Total record time
+
+    - Data section: 5 bytes * point count ---------------------------
+      0x00 (0)   2  (int16)   1 mV     USB V_BUS voltage
+      0x02 (2)   2  (int16)   1 mA     USB V_BUS current
+      0x04 (4)   1  (int8)    1 °C/°F  External temperature
 """
 
 src_dir = "src"

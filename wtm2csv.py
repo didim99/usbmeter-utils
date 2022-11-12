@@ -5,20 +5,22 @@ import os
 from common import *
 
 """
-    WTM format specification (WITRN Meter v4.6):
+    WTM format specification (WITRN Meter v4.6).
+    Measurement frequency: 100 samples per second.
+    All multi-byte values stored in Little-endian.
+    File structure:
 
-    File structure
-    Measurement frequency: 100 samples per second
-    16 bytes - header, 'wtm1903 ' in UTF16-LE
-    Data records, 7 bytes for each record:
-        size - value, format, precision
-        2 bytes - voltage, sighed int, 1 mV
-        2 bytes - current, sighed int, 1 mA
-        1 byte - D- voltage, sighed int, 100 mV
-        1 byte - D+ voltage, sighed int, 100 mV
-        1 byte - ext. temp, sighed int, 1 degC/degF
+      Offset     Size         Unit     Description
 
-    All multi-byte values stored in Little-endian
+    - Header: 16 bytes ----------------------------------------------
+      0x00 (0)   16 (string)           "wtm1903 " in UTF16-LE
+
+    - Data section: 7 bytes * point count ---------------------------
+      0x00 (0)   2  (int16)   1 mV     USB V_BUS voltage
+      0x02 (2)   2  (int16)   1 mA     USB V_BUS current
+      0x04 (4)   1  (int8)    100 mV   USB D- voltage
+      0x05 (5)   1  (int8)    100 mV   USB D+ voltage
+      0x06 (6)   1  (int8)    1 °C/°F  External temperature
 """
 
 src_dir = "src"
