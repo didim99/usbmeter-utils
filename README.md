@@ -14,7 +14,7 @@ USB-tester (firmware v7.8) via WITRN Meter v4.6.
 
 ## FNIRSI
 
-* CFN (realtime record log) to CSV converter *(work in process)*
+* CFN (realtime record log) to CSV converter
 
-Scripts based on files collected from FNIRSI FNB48
+Scripts based on files collected from FNIRSI FNB48/FNB58
 USB-tester (firmware v2.60) and FNIRSI Toolbox v0.0.6.
