@@ -57,6 +57,7 @@ out_dir = "out"
 src_ext = ".cfn"
 out_ext = ".csv"
 
+debug = False
 add_header = True
 
 channel_types = {
@@ -95,9 +96,10 @@ if __name__ == '__main__':
 
         tmp_str = f"# {samplerate} sps, start/stop: {start_curr}/{stop_curr}" + \
                   f" mA ({stop_time} s), channels: {ch_count}"
-        print(tmp_str)
         if add_header:
             out_file.write(tmp_str + "\n")
+        if debug:
+            print(tmp_str)
 
         csv_header = ["Time"]
         min_max = []
@@ -108,7 +110,8 @@ if __name__ == '__main__':
             csv_header.append(ch_name["name"])
 
             buf = src_file.read(4)  # unknown
-            # print(f"{ch_name:>2}:", hex_spaced(buf))
+            if debug:
+                print(f"{ch_name['symbol']:>2}:", hex_spaced(buf))
 
             has_min_max = read_int(src_file, 1)
             if has_min_max == 1:
@@ -125,15 +128,18 @@ if __name__ == '__main__':
 
         pts_count = read_int(src_file, 4)
         fsize = os.stat(os.path.join(src_dir, name)).st_size
-        print(f"  data points: {pts_count} ({fsize} bytes)")
+        print(f"  Total points: {pts_count} ({fsize} bytes)")
 
         for index in range(pts_count):
             values = []
             for i in range(ch_count+1):
                 values.append(read_float(src_file, 8))
-            # print(values)
+            if debug:
+                print(values)
             values = ",".join([f"{v:.8f}" for v in values])
             out_file.write(values + "\n")
+
+        files += 1
 
         # ---------------------------------------------------------
 
