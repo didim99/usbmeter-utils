@@ -23,7 +23,7 @@ from common import *
       0x00 (0)   2  (int16)            Channel type (see below)
       0x02 (2)   4  (???)              Unknown data *
       0x06 (6)   1  (bool)             Min/Max flag
-      -------------- if Min/Max flag = 0x01 (true)-------------------
+      -------------- if Min/Max flag == 0x01 (true) -----------------
       0x07 (7)   8  (double)  various  Max registered value
       0x0e (15)  8  (double)  various  Min registered value
 
