@@ -39,11 +39,11 @@ def read_float(src, size) -> float or None:
     return struct.unpack("<d", buf)[0]
 
 
-def read_int(src, size) -> int or None:
+def read_int(src, size, signed=True) -> int or None:
     buf = src.read(size)
     if not buf:
         return None
-    return int.from_bytes(buf, 'little', signed=True)
+    return int.from_bytes(buf, 'little', signed=signed)
 
 
 def lines_count(name):

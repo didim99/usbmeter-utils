@@ -21,7 +21,7 @@ from common import *
     - Channel descriptors: ch_count * 7(23) bytes -------------------
 
       0x00 (0)   2  (int16)            Channel type (see below)
-      0x02 (2)   4  (???)              Unknown data *
+      0x02 (2)   4  (uint32)           Channel color (in ARGB format)
       0x06 (6)   1  (bool)             Min/Max flag
       -------------- if Min/Max flag == 0x01 (true) -----------------
       0x07 (7)   8  (double)  various  Max registered value
@@ -41,15 +41,16 @@ from common import *
       --------------------------------------------------------------
 
       Channel types:
-      0x00: USB V_BUS voltage (x 1V)
-      0x01: USB V_BUS current (x 1A)
-      0x02: USB D+ voltage (x 1V)
-      0x03: USB D- voltage (x 1V)
-      0x04: Power (x 1W)
-      0x05: Accumulated capacity (x 1Ah)
-      0c06: Accumulated energy (x 1Wh)
-
-      * - byte sequence seems constant dependent from channel type
+      
+      | Code | Channel              | Unit  | Default color             |
+      |------|----------------------|-------|---------------------------|
+      | 0x00 | USB V_BUS voltage    | x 1V  | #ffffff00 (Yellow)        |
+      | 0x01 | USB V_BUS current    | x 1A  | #ff00ff00 (Green)         |
+      | 0x02 | USB D+ voltage       | x 1V  | #ffff0000 (Red)           |
+      | 0x03 | USB D- voltage       | x 1V  | #ff0672ff (Blue)          |
+      | 0x04 | Power                | x 1W  | #ffff55ff (Pink)          |
+      | 0x05 | Accumulated capacity | x 1Ah | #ffff5500 (Orange)        |
+      | 0c06 | Accumulated energy   | x 1Wh | #ffffaa00 (Orange-Yellow) |
 """
 
 src_dir = "src"
@@ -102,27 +103,28 @@ if __name__ == '__main__':
             print(tmp_str)
 
         csv_header = ["Time"]
-        min_max = []
+        headers = []
 
         for i in range(ch_count):
             ch_type = read_int(src_file, 2)
             ch_name = channel_types[ch_type]
             csv_header.append(ch_name["name"])
 
-            buf = src_file.read(4)  # unknown
+            color = read_int(src_file, 4, False)
+            color = f"#{color:08x}"
             if debug:
-                print(f"{ch_name['symbol']:>2}:", hex_spaced(buf))
+                print(f"{ch_name['symbol']:>2}:", color)
 
             has_min_max = read_int(src_file, 1)
+            tmp_str = f"# {ch_name['symbol']} ({color})"
             if has_min_max == 1:
                 v_max = read_float(src_file, 8)
                 v_min = read_float(src_file, 8)
-                tmp_str = f"# {ch_name['symbol']} min: {v_min}, " + \
-                          f"{ch_name['symbol']} max: {v_max}" + "\n"
-                min_max.append(tmp_str)
+                tmp_str += f", min: {v_min}, max: {v_max}"
+            headers.append(tmp_str + "\n")
 
         if add_header:
-            out_file.writelines(min_max)
+            out_file.writelines(headers)
             csv_header = ",".join(csv_header)
             out_file.write(csv_header + "\n")
 
